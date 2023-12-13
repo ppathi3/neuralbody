@@ -1,11 +1,3 @@
-**News**
-
-* `11/04/2023` The enhanced version of the paper has been accepted to T-PAMI. We update information about the journal version of the paper.
-* `05/17/2021` To make the comparison on ZJU-MoCap easier, we save quantitative and qualitative results of other methods at [here](https://github.com/zju3dv/neuralbody/blob/master/supplementary_material.md#results-of-other-methods-on-zju-mocap), including Neural Volumes, Multi-view Neural Human Rendering, and Deferred Neural Human Rendering.
-* `05/13/2021` To make the following works easier compare with our model, we save our rendering results of ZJU-MoCap at [here](https://zjueducn-my.sharepoint.com/:u:/g/personal/pengsida_zju_edu_cn/Ea3VOUy204VAiVJ-V-OGd9YBxdhbtfpS-U6icD_rDq0mUQ?e=cAcylK) and write a [document](supplementary_material.md) that describes the training and test protocols.
-* `05/12/2021` The code supports the test and visualization on unseen human poses.
-* `05/12/2021` We update the ZJU-MoCap dataset with better fitted SMPL using [EasyMocap](https://github.com/zju3dv/EasyMocap). We also release a [website](https://zju3dv.github.io/zju_mocap/) for visualization. Please see [here](https://github.com/zju3dv/neuralbody#potential-problems-of-provided-smpl-parameters) for the usage of provided smpl parameters.
-
 # Neural Body: Implicit Neural Representations with Structured Latent Codes for Novel View Synthesis of Dynamic Humans
 ### [Project Page](https://zju3dv.github.io/neuralbody) | [Video](https://www.youtube.com/watch?v=BPCAMeBCE-8) | [Journal Paper](https://ieeexplore.ieee.org/document/10045794) | [Conference Paper](https://arxiv.org/pdf/2012.15838.pdf) | [Data](https://github.com/zju3dv/neuralbody/blob/master/INSTALL.md#zju-mocap-dataset)
 
@@ -19,21 +11,9 @@
 > Sida Peng, Chen Geng, Yuanqing Zhang, Yinghao Xu, Qianqian Wang, Qing Shuai, Hujun Bao, Xiaowei Zhou  
 > TPAMI 2023
 
-Any questions or discussions are welcomed!
-
 ## Installation
 
 Please see [INSTALL.md](INSTALL.md) for manual installation.
-
-### Installation using docker
-
-Please see [docker/README.md](docker/README.md).
-
-Thanks to [Zhaoyi Wan](https://github.com/wanzysky) for providing the docker implementation.
-
-## Run the code on the custom dataset
-
-Please see [CUSTOM](tools/custom).
 
 ## Run the code on People-Snapshot
 
@@ -59,6 +39,9 @@ Take the visualization on `female-3-casual` as an example. The command lines for
     ```
 
     ![monocular](https://zju3dv.github.io/neuralbody/images/monocular_render.gif)
+    
+    This is a time consuming operation, it takes a minimum of 3-4 hours to be executed successfully.
+    After running this command, multiple images are generated in the *data/render* folder for the given pose in people snapshot using which the above visualization is generated.
 
     * Visualize views of dynamic humans with fixed camera
     ```
@@ -79,41 +62,12 @@ Take the visualization on `female-3-casual` as an example. The command lines for
 
 3. The results of visualization are located at `$ROOT/data/render/female3c` and `$ROOT/data/perform/female3c`.
 
-### Training on People-Snapshot
-
-Take the training on `female-3-casual` as an example. The command lines for training are recorded in [train.sh](train.sh).
-
-1. Train:
-    ```
-    # training
-    python train_net.py --cfg_file configs/snapshot_exp/snapshot_f3c.yaml exp_name female3c resume False
-    # distributed training
-    python -m torch.distributed.launch --nproc_per_node=4 train_net.py --cfg_file configs/snapshot_exp/snapshot_f3c.yaml exp_name female3c resume False gpus "0, 1, 2, 3" distributed True
-    ```
-2. Train with white background:
-    ```
-    # training
-    python train_net.py --cfg_file configs/snapshot_exp/snapshot_f3c.yaml exp_name female3c resume False white_bkgd True
-    ```
-3. Tensorboard:
-    ```
-    tensorboard --logdir data/record/if_nerf
-    ```
 
 ## Run the code on ZJU-MoCap
 
 Please see [INSTALL.md](INSTALL.md) to download the dataset.
 
 We provide the pretrained models at [here](https://drive.google.com/drive/folders/1yR2KauFaM7kvQgsdlS_qsj9u9Y9qu9C-?usp=sharing).
-
-### Potential problems of provided smpl parameters
-
-1. The newly fitted parameters locate in `new_params`. Currently, the released pretrained models are trained on previously fitted parameters, which locate in `params`.
-2. The smpl parameters of ZJU-MoCap have different definition from the one of MPI's smplx.
-    * If you want to extract vertices from the provided smpl parameters, please use `zju_smpl/extract_vertices.py`.
-    * The reason that we use the current definition is described at [here](https://github.com/zju3dv/EasyMocap/blob/master/doc/02_output.md#attention-for-smplsmpl-x-users).
-
-It is okay to train Neural Body with smpl parameters fitted by smplx.
 
 ### Test on ZJU-MoCap
 
@@ -122,6 +76,7 @@ The command lines for test are recorded in [test.sh](test.sh).
 Take the test on `sequence 313` as an example.
 
 1. Download the corresponding pretrained model and put it to `$ROOT/data/trained_model/if_nerf/xyzc_313/latest.pth`.
+
 2. Test on training human poses:
     ```
     python run.py --type evaluate --cfg_file configs/zju_mocap_exp/latent_xyzc_313.yaml exp_name xyzc_313
@@ -172,30 +127,8 @@ Take the visualization on `sequence 313` as an example. The command lines for vi
 
 4. The results of visualization are located at `$ROOT/data/render/xyzc_313` and `$ROOT/data/perform/xyzc_313`.
 
-### Training on ZJU-MoCap
-
-Take the training on `sequence 313` as an example. The command lines for training are recorded in [train.sh](train.sh).
-
-1. Train:
-    ```
-    # training
-    python train_net.py --cfg_file configs/zju_mocap_exp/latent_xyzc_313.yaml exp_name xyzc_313 resume False
-    # distributed training
-    python -m torch.distributed.launch --nproc_per_node=4 train_net.py --cfg_file configs/zju_mocap_exp/latent_xyzc_313.yaml exp_name xyzc_313 resume False gpus "0, 1, 2, 3" distributed True
-    ```
-2. Train with white background:
-    ```
-    # training
-    python train_net.py --cfg_file configs/zju_mocap_exp/latent_xyzc_313.yaml exp_name xyzc_313 resume False white_bkgd True
-    ```
-3. Tensorboard:
-    ```
-    tensorboard --logdir data/record/if_nerf
-    ```
 
 ## Citation
-
-If you find this code useful for your research, please use the following BibTeX entry.
 
 ```
 @article{peng2023implicit,
