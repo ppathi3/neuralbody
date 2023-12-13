@@ -1,28 +1,32 @@
-### Set up the python environment
+## Set up the virtual environment in Google Colab
 
-```
-conda create -n neuralbody python=3.7
-conda activate neuralbody
+### Step-1: In Colab, clone the GitHub repo for the neural body
 
-# make sure that the pytorch cuda is consistent with the system cuda
-# e.g., if your system cuda is 10.0, install torch 1.4 built from cuda 10.0
-pip install torch==1.4.0+cu100 -f https://download.pytorch.org/whl/torch_stable.html
+!git clone https://github.com/ppathi3/neuralbody
 
-pip install -r requirements.txt
-
-# install spconv
-cd
-git clone https://github.com/traveller59/spconv --recursive
-cd spconv
-git checkout abf0acf30f5526ea93e687e3f424f62d9cd8313a
-git submodule update --init --recursive
-export CUDA_HOME="/usr/local/cuda-10.0"
-python setup.py bdist_wheel
-cd dist
-pip install spconv-1.2.1-cp36-cp36m-linux_x86_64.whl
+### Step-2: Installing required dependencies in Colab
 ```
 
-### Set up datasets
+# make sure that the PyTorch cuda is consistent with the environment cuda
+# e.g., if your environment cuda is 11.8, install torch 2.1 built from cuda 11.8
+a) install torch
+!pip install torch==2.1.0+cu118 -f https://download.pytorch.org/whl/torch_stable.html
+
+b) install project requirements
+!pip install -r requirements.txt
+
+c) install spconv
+%cd spconv
+%cd dist
+!pip install spconv-1.2.1-cp36-cp36m-linux_x86_64.whl
+
+# Note: Sometimes errors occur in Pillow and ImageIO libraries, if yes, use the below lines to update the libraries and resolve those errors
+
+!pip install --upgrade pillow
+!pip install imageio==2.4.0
+```
+
+### Step-3: Set up datasets
 
 #### People-Snapshot dataset
 
@@ -44,3 +48,17 @@ pip install spconv-1.2.1-cp36-cp36m-linux_x86_64.whl
     cd $ROOT/data
     ln -s /path/to/zju_mocap zju_mocap
     ```
+
+
+#### Once the above steps are done and the environment is set up, you can go back to the Readme file to download the pre-trained models and put them in the required directory before running the evaluation and visualization commands.
+
+#### Downloading huge datasets/pre-trained models and loading them on Colab is not possible, we faced issues with the same. So it is better to mount the drive files add the neural body repo to the drive and directly upload the dataset files wherever required instead of doing it from Colab
+
+```
+Steps for mounting the neural body after adding it to drive
+
+from google.colab import drive
+drive.mount('/content/drive', force_remount=True)
+%cd drive/MyDrive/neuralbody
+
+```
