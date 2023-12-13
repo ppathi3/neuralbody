@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: spconv
+Version: 1.2.1
+Summary: spatial sparse convolution for pytorch
+Author: Yan Yan
+Author-email: scrin@foxmail.com
+License-File: LICENSE
